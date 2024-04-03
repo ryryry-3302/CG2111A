@@ -251,6 +251,8 @@ void sendCommand(char command)
 		case 'i':
 		case 'I':
 			commandPacket.command = COMMAND_GET_COLOUR;
+			printf("sending\n");
+
 			sendPacket(&commandPacket);
 			break;
 
