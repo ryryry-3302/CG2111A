@@ -499,8 +499,9 @@ void handleCommand(TPacket *command)
         break; 
     
     case COMMAND_GET_COLOUR:;
-      
-      break;
+        sendColour();
+        break;
+    break;
 
 
     default:
