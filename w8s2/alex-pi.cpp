@@ -232,6 +232,12 @@ void sendCommand(char command)
 			exitFlag=1;
 			break;
 
+		case 'i':
+		case 'I':
+			commandPacket.command = COMMAND_GET_COLOUR;
+			sendPacket(&commandPacket);
+			break;
+
 		default:
 			printf("Bad command\n");
 

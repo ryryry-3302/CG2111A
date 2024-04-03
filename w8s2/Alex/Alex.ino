@@ -8,8 +8,7 @@
 #define PI 3.141592654
 // 26by15cm
 
-
-float  alexDiagonal =0.0;
+float alexDiagonal =0.0;
 float alexCirc = 0.0;
 
 volatile TDirection dir;
@@ -62,6 +61,11 @@ unsigned long newDist;
 
 unsigned long deltaTicks;
 unsigned long targetTicks;
+
+volatile unsigned long redColour;
+volatile unsigned long greenColour;
+volatile unsigned long blueColour;
+
 /*
  * 
  * Alex Communication Routines.
@@ -109,6 +113,9 @@ void sendStatus()
   statusPacket.params[7] = rightReverseTicksTurns;
   statusPacket.params[8] = forwardDist;
   statusPacket.params[9] = reverseDist;
+  statusPacket.params[10] = redColour;
+  statusPacket.params[11] = greenColour;
+  stautsPacket.params[12] = blueColour;
   sendResponse(&statusPacket);
   
      
@@ -385,40 +392,10 @@ void clearCounters()
 // Clears one particular counter
 void clearOneCounter(int which)
 {
-  /*switch(which)
-  {
-    case 0:
-      clearCounters();
-      break;
-
-    case 1:
-      leftTicks=0;
-      break;
-
-    case 2:
-      rightTicks=0;
-      break;
-
-    case 3:
-      leftRevs=0;
-      break;
-
-    case 4:
-      rightRevs=0;
-      break;
-
-    case 5:
-      forwardDist=0;
-      break;
-
-    case 6:
-      reverseDist=0;
-      break;
-  }*/
   clearCounters();
 }
-// Intialize Alex's internal states
 
+// Intialize Alex's internal states
 void initializeState()
 {
   clearCounters();
