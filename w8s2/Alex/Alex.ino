@@ -6,6 +6,22 @@
 #define ALEX_LENGTH 26
 #define ALEX_BREADTH 15
 #define PI 3.141592654
+//colour sensor 
+
+#define S0 35 //purple
+#define S1 36 //green
+#define S2 37 //yellow
+#define S3 38 //grey
+#define sensorOut 39 //blue
+
+// Stores frequency read by the photodiodes
+volatile unsigned int redFrequency = 0;
+volatile unsigned int greenFrequency = 0;
+volatile unsigned int blueFrequency = 0;
+
+
+
+
 // 26by15cm
 
 float alexDiagonal =0.0;
@@ -91,6 +107,51 @@ TResult readPacket(TPacket *packet)
     
 }
 
+void getColour(){
+  digitalWrite(S2,LOW);
+  digitalWrite(S3,LOW);
+  
+  // Reading the output frequency
+  redFrequency = pulseIn(sensorOut, LOW);
+  
+   // Printing the RED (R) value
+
+  delay(100);
+  
+  // Setting GREEN (G) filtered photodiodes to be read
+  digitalWrite(S2,HIGH);
+  digitalWrite(S3,HIGH);
+  
+  // Reading the output frequency
+  greenFrequency = pulseIn(sensorOut, LOW);
+  
+  // Printing the GREEN (G) value  
+
+  delay(100);
+ 
+  // Setting BLUE (B) filtered photodiodes to be read
+  digitalWrite(S2,LOW);
+  digitalWrite(S3,HIGH);
+  
+  // Reading the output frequency
+  blueFrequency = pulseIn(sensorOut, LOW);
+  
+  // Printing the BLUE (B) value 
+  delay(100);
+}
+
+void sendColour(){
+  getColour();
+  TPacket colourPacket;
+  colourPacket.packetType = PACKET_TYPE_RESPONSE;
+  colourPacket.command = RESP_COLOUR;
+  colourPacket.params[0] = redFrequency;
+  colourPacket.params[1] = greenFrequency;
+  colourPacket.params[2] = blueFrequency;
+  sendResponse(&colourPacket);
+
+}
+
 void sendStatus()
 {
   // Implement code to send back a packet containing key
@@ -113,9 +174,7 @@ void sendStatus()
   statusPacket.params[7] = rightReverseTicksTurns;
   statusPacket.params[8] = forwardDist;
   statusPacket.params[9] = reverseDist;
-  statusPacket.params[10] = redColour;
-  statusPacket.params[11] = greenColour;
-  stautsPacket.params[12] = blueColour;
+  
   sendResponse(&statusPacket);
   
      
@@ -438,7 +497,12 @@ void handleCommand(TPacket *command)
         clearOneCounter(command->params[0]);
         sendOK();
         break; 
-        
+    
+    case COMMAND_GET_COLOUR:;
+      
+      break;
+
+
     default:
       sendBadCommand();
       break;
@@ -487,6 +551,19 @@ void setup() {
   alexDiagonal = sqrt((ALEX_LENGTH * ALEX_LENGTH) + (ALEX_BREADTH * ALEX_BREADTH));
   alexCirc = PI * alexDiagonal;
   cli();
+  // Setting the outputs
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  
+  // Setting the sensorOut as an input
+  pinMode(sensorOut, INPUT);
+  
+  // Setting frequency scaling to 20%
+  digitalWrite(S0,HIGH);
+  digitalWrite(S1,LOW);
+  
   setupEINT();
   setupSerial();
   startSerial();
@@ -554,7 +631,6 @@ void loop() {
 
  //forward(0, 100);
 
-// Uncomment the code below for Week 9 Studio 2
 
 
  // put your main code here, to run repeatedly:

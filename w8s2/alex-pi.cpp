@@ -31,6 +31,18 @@ void handleError(TResult error)
 	}
 }
 
+void handleColour(TPacket*packet){
+	printf("\n ------- ALEX Colour REPORT ------- \n\n");
+	printf("red frequency:\t\t%d\n", packet->params[0]);
+	printf("green frequency:\t\t%d\n", packet->params[1]);
+	printf("blue frequency:\t\t%d\n", packet->params[2]);
+
+
+	printf("\n---------------------------------------\n\n");
+
+	
+}
+
 void handleStatus(TPacket *packet)
 {
 	printf("\n ------- ALEX STATUS REPORT ------- \n\n");
@@ -58,6 +70,10 @@ void handleResponse(TPacket *packet)
 
 		case RESP_STATUS:
 			handleStatus(packet);
+		break;
+
+		case RESP_COLOUR:
+			handleColour(packet);
 		break;
 
 		default:
