@@ -187,6 +187,11 @@ void getParams(TPacket *commandPacket)
 	scanf("%d %d", &commandPacket->params[0], &commandPacket->params[1]);
 	flushInput();
 }
+void getMessage(TPacket *commandPacket)
+{
+	printf("Enter message below \n");
+	scanf("%31s", commandPacket->data);
+}
 
 void sendCommand(char command)
 {
@@ -255,6 +260,15 @@ void sendCommand(char command)
 
 			sendPacket(&commandPacket);
 			break;
+		case 't':
+		case 'T':
+			commandPacket.command = COMMAND_SEND_MESSAGE;
+			printf("initialise send message\n");
+			getMessage(&commandPacket);
+			printf("Sending message %s\n",commandPacket.data);
+			sendPacket(&commandPacket);
+			break;
+			
 
 		default:
 			printf("Bad command\n");
@@ -286,7 +300,7 @@ int main()
 	while(!exitFlag)
 	{
 		char ch;
-		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, s=stop, c=clear stats, g=get stats, i = identify object q=exit)\n");
+		printf("Command (f=forward, b=reverse, l=turn left, r=turn right, s=stop, c=clear stats, g=get stats, i = identify object,t =send message q=exit)\n");
 		scanf("%c", &ch);
 
 		// Purge extraneous characters from input stream
