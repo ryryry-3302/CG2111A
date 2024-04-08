@@ -145,9 +145,9 @@ void sendColour(){
   TPacket colourPacket;
   colourPacket.packetType = PACKET_TYPE_RESPONSE;
   colourPacket.command = RESP_COLOUR;
-  colourPacket.params[0] = redFrequency;
-  colourPacket.params[1] = greenFrequency;
-  colourPacket.params[2] = blueFrequency;
+  colourPacket.params[0] = map(redFrequency,457,101,0,255);
+  colourPacket.params[1] = map(greenFrequency,513,137,0,255);
+  colourPacket.params[2] = map(blueFrequency,447,125,0,255);
   sendResponse(&colourPacket);
 
 }
