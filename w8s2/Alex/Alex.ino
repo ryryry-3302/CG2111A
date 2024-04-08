@@ -14,7 +14,7 @@
 #define S3 38 //grey
 #define sensorOut 39 //blue
 
-// Stores frequency read by the photodiodes
+// Storesrequency read by the photodiodes
 volatile unsigned int redFrequency = 0;
 volatile unsigned int greenFrequency = 0;
 volatile unsigned int blueFrequency = 0;
@@ -36,6 +36,7 @@ volatile TDirection dir;
 // wheel encoder
 
 #define COUNTS_PER_REV      4
+#define COUNTS_PER_REV_left 40
 
 // Wheel circumference in cm.
 // We will use this to calculate forward/backward distance traveled 
@@ -316,7 +317,7 @@ void rightISR()
   
   if (dir == BACKWARD){
   rightReverseTicks++;
-  reverseDist = (unsigned long) ((float) leftReverseTicks / COUNTS_PER_REV * WHEEL_CIRC);
+  reverseDist = (unsigned long) ((float) rightReverseTicks / COUNTS_PER_REV * WHEEL_CIRC);
 
  
   }
@@ -598,7 +599,7 @@ void handlePacket(TPacket *packet)
   }
 }
 unsigned long computeDeltaTicks(float ang){
-  unsigned long ticks = (unsigned long)((ang*alexCirc * COUNTS_PER_REV)  / (360.0 * WHEEL_CIRC));
+  unsigned long ticks = (unsigned long)((ang*alexCirc * COUNTS_PER_REV*2.5)  / (360.0 * WHEEL_CIRC));
   return ticks;
   
 }
@@ -611,7 +612,7 @@ void left(float ang, float speed)
   else{
     deltaTicks=computeDeltaTicks(ang);
   }
-  targetTicks = leftReverseTicksTurns + deltaTicks;
+  targetTicks = rightForwardTicksTurns + deltaTicks;
   ccw(ang,speed);
 }
   
