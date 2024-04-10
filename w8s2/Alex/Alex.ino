@@ -3,9 +3,31 @@
 #include "packet.h"
 #include "constants.h"
 #include <stdarg.h>
+#include <Wire.h>
+#include <hd44780.h>  // Include the hd44780 library
+#include <hd44780ioClass/hd44780_I2Cexp.h> // Include the I2C expander IO class
+
+// Set the I2C address of your LCD module
+#define LCD_ADDRESS 0x27
+
+// Set the dimensions of your LCD (number of columns and rows)
+#define LCD_COLUMNS 16
+#define LCD_ROWS 2
+
+// Create an hd44780_I2Cexp I2C expander object
+hd44780_I2Cexp lcd;
+
+
 #define ALEX_LENGTH 26
 #define ALEX_BREADTH 15
 #define PI 3.141592654
+
+
+// SDA: Arduino Mega pin 20 orange
+// SCL: Arduino Mega pin 21 blue
+// VCC: 5V pin of the Arduino Mega
+// GND: GND pin of the Arduino Mega
+
 //colour sensor 
 
 #define S0 35 //purple
@@ -146,9 +168,14 @@ void sendColour(){
   TPacket colourPacket;
   colourPacket.packetType = PACKET_TYPE_RESPONSE;
   colourPacket.command = RESP_COLOUR;
-  colourPacket.params[0] = map(redFrequency,457,101,0,255);
-  colourPacket.params[1] = map(greenFrequency,513,137,0,255);
-  colourPacket.params[2] = map(blueFrequency,447,125,0,255);
+  colourPacket.params[0] = map(redFrequency,550,50,0,255);
+  colourPacket.params[1] = map(greenFrequency,513,65,0,255);
+  colourPacket.params[2] = map(blueFrequency,507,48,0,255);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("identified");
+  lcd.setCursor(0,1);
+  lcd.print("R"+(String)colourPacket.params[0] + " G"+ (String)colourPacket.params[1] + " B"+(String)colourPacket.params[2]);
   sendResponse(&colourPacket);
 
 }
@@ -264,7 +291,7 @@ void sendResponse(TPacket *packet)
 
 
 /*
- * Setup and start codes for external interrupts and 
+ *  and start codes for external interrupts and 
  * pullup resistors.
  * 
  */
@@ -469,6 +496,11 @@ void handleCommand(TPacket *command)
   {
     // For movement commands, param[0] = distance, param[1] = speed.
     case COMMAND_FORWARD:
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Moving Forward");
+        lcd.setCursor(7,1);
+        lcd.print(":P");
         sendOK();
         forward((double) command->params[0], (float) command->params[1]);
       break;
@@ -478,31 +510,58 @@ void handleCommand(TPacket *command)
      * 
      */
     case COMMAND_REVERSE:
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Reversing");
+        lcd.setCursor(0,1);
+        lcd.print(":D");
         sendOK();
         backward((double) command->params[0], (float) command->params[1]);
       break;
     case COMMAND_TURN_LEFT:
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Turning");
+        lcd.setCursor(0,1);
+        lcd.print("Left");
         sendOK();
         left((double) command->params[0], (float) command->params[1]);
       break;
     case COMMAND_TURN_RIGHT:
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Turning");
+        lcd.setCursor(0,1);
+        lcd.print("Right");
         sendOK();
         right((double) command->params[0], (float) command->params[1]);
       break;
     case COMMAND_STOP:
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Stopping");
+        lcd.setCursor(7,1);
+        lcd.print("OwO");
         sendOK();
         stop();
       break;
     case COMMAND_GET_STATS:
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Sending Stats");
         sendStatus();
        break;   
     case COMMAND_CLEAR_STATS:
         clearOneCounter(command->params[0]);
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Clearing Stats");
         sendOK();
         break; 
     
     case COMMAND_GET_COLOUR:;
         sendColour();
+        
         break;
     break;
 
@@ -567,6 +626,7 @@ void setup() {
   // Setting frequency scaling to 20%
   digitalWrite(S0,HIGH);
   digitalWrite(S1,LOW);
+
   
   setupEINT();
   setupSerial();
@@ -574,7 +634,15 @@ void setup() {
   enablePullups();
   initializeState();
   sei();
- // dbprintf("i am alive");
+  // Initialize the LCD with the I2C address and dimensions
+  lcd.begin(LCD_COLUMNS, LCD_ROWS);
+  delay(200);
+  // Print a message to the LCD
+  lcd.setCursor(0,0);
+  lcd.print("HELLO HELLO");
+
+
+
 }
 
 void handlePacket(TPacket *packet)
@@ -599,7 +667,7 @@ void handlePacket(TPacket *packet)
   }
 }
 unsigned long computeDeltaTicks(float ang){
-  unsigned long ticks = (unsigned long)((ang*alexCirc * COUNTS_PER_REV*2.5)  / (360.0 * WHEEL_CIRC));
+  unsigned long ticks = (unsigned long)((ang*alexCirc * COUNTS_PER_REV*1.15)  / (360.0 * WHEEL_CIRC));
   return ticks;
   
 }
@@ -632,10 +700,9 @@ void right(float ang, float speed)
 
 void loop() {
 // Uncomment the code below for Step 2 of Activity 3 in Week 8 Studio 2
+  
 
- //forward(0, 100);
-
-
+  
 
  // put your main code here, to run repeatedly:
   TPacket recvPacket; // This holds commands from the Pi
