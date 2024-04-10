@@ -168,9 +168,9 @@ void sendColour(){
   TPacket colourPacket;
   colourPacket.packetType = PACKET_TYPE_RESPONSE;
   colourPacket.command = RESP_COLOUR;
-  colourPacket.params[0] = map(redFrequency,550,50,0,255);
-  colourPacket.params[1] = map(greenFrequency,513,65,0,255);
-  colourPacket.params[2] = map(blueFrequency,507,48,0,255);
+  colourPacket.params[0] = map(redFrequency,550,50,0,255) > 0?map(redFrequency,550,50,0,255): 0;
+  colourPacket.params[1] = map(greenFrequency,513,65,0,255) > 0?map(greenFrequency,513,65,0,255): 0;
+  colourPacket.params[2] = map(blueFrequency,507,48,0,255) >0?map(blueFrequency,507,48,0,255): 0;
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("identified");
