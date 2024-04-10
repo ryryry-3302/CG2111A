@@ -559,11 +559,28 @@ void handleCommand(TPacket *command)
         sendOK();
         break; 
     
-    case COMMAND_GET_COLOUR:;
+    case COMMAND_GET_COLOUR:
         sendColour();
         
         break;
     break;
+
+    case COMMAND_SEND_MESSAGE:
+      lcd.clear();
+      int row = 0; // Start with the first row
+      int column = 0; // Start with the first column
+      for (int i = 0; command->data[i] != '\0' || i == 32; ++i) {
+        lcd.setCursor(column, row); // Set the cursor to the current position
+        lcd.write(message[i]); // Print the current character
+        column++; // Move to the next column
+
+        // If we reach the end of the first row, move to the second row
+        if (column == 16 && row == 0) {
+          row = 1;
+          column = 0;
+        }
+      }
+      break;
 
 
     default:
