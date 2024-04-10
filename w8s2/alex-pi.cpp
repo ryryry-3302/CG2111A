@@ -190,7 +190,7 @@ void getParams(TPacket *commandPacket)
 void getMessage(TPacket *commandPacket)
 {
 	printf("Enter message below \n");
-	scanf("%31s", commandPacket->data);
+  	scanf(" %[^\n]%*c", commandPacket->data);
 }
 
 void sendCommand(char command)
