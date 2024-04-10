@@ -569,9 +569,9 @@ void handleCommand(TPacket *command)
       lcd.clear();
       int row = 0; // Start with the first row
       int column = 0; // Start with the first column
-      for (int i = 0; command->data[i] != '\0' || i == 32; ++i) {
+      for (int i = 0; command->data[i] != '\0' || i == 33; ++i) {
         lcd.setCursor(column, row); // Set the cursor to the current position
-        lcd.write(message[i]); // Print the current character
+        lcd.write(command->data[i]); // Print the current character
         column++; // Move to the next column
 
         // If we reach the end of the first row, move to the second row
@@ -772,7 +772,7 @@ void loop() {
   if(deltaTicks > 0){
     if(dir == LEFT){
       if(leftReverseTicksTurns >= targetTicks){
-          dbprintf("HELLLLLLLLLLLLLLLLLLLLLLLOO");
+          
           deltaTicks=0;
           targetTicks =0;
           stop();
