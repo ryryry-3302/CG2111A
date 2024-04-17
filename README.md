@@ -9,10 +9,10 @@ Remotely controlled robot with SLAM, controlled using SSH.
 ![Side](msg634414407-156273.jpg)
 
 ## Functionality
-4 Directional movement 
-Custom Display Text on LCD
-Colour Identification
-Mapping using Lidar and RViz
+- 4 Directional movement 
+- Custom Display Text on LCD
+- Colour Identification
+- Mapping using Lidar and RViz
 
 
 ## Directory
